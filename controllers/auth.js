@@ -1,5 +1,4 @@
 const Auth = require('../models/auth')
-const {BadRequestAPIError, UnauthenticatedAPIError} = require('../errors')
 const {StatusCodes} = require('http-status-codes')
 
 exports.registerPage = async (req, res) => {
@@ -13,7 +12,7 @@ exports.registerUser = async (req, res) => {
     if (newUser) {
       try {
         const headers = {newUser, token}
-        res.status(StatusCodes.CREATED).render('login', headers)
+        return res.status(StatusCodes.CREATED).render('login', headers)
       } catch (error) {
         console.log(error)
       }
@@ -28,23 +27,24 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body
 
   if (!email || !password) {
-    throw new BadRequestAPIError('Please provide email and password')
+   res.status(StatusCodes.BAD_REQUEST).render('login', {msg : `Please provide email and password!`})
   }
   const user = await Auth.findOne({ email })
   if (!user) {
-    throw new UnauthenticatedAPIError('Invalid Credentials')
+   res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Email is incorrect!`})
   }
+    // compare password
   const isPasswordCorrect = await user.comparePassword(password)
+
   if (!isPasswordCorrect) {
-    throw new UnauthenticatedAPIError('Invalid Credentials')
+    res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Password is incorrect!`})
   }
-  // compare password
     const token = user.createJWT()
     
     if (user) {
       try {
         const headers = {user, token}
-        res.status(StatusCodes.OK).render('index', headers)
+        return res.status(StatusCodes.OK).render('product', headers)
       } catch (error) {
         console.log(error)
       }
@@ -52,5 +52,5 @@ exports.loginUser = async (req, res) => {
 }
 
 exports.logout = async (req, res) => {
-    res.render('logout')
+    res.render('login')
 }
