@@ -10,12 +10,13 @@ const notfoundMiddleware = require('./middlewares/notfound')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const authMiddleware = require('./middlewares/authenticated')
+const cookieParser = require('cookie-parser')
 
-// Routes //
+// Routes 
 const htmlRouter = require('./routes/htmlpages')
 const authRouter = require('./routes/auth')
 
-//templating engine // 
+//templating engine
 server.engine("handlebars", exphbs.engine({extname: ".handlebars", defaultLayout: false}));
 server.set('view engine', 'handlebars')
 
@@ -26,9 +27,11 @@ server.use('/public', express.static(path.join(__dirname, 'public')))
 server.use(express.json())
 server.use(express.urlencoded({extended: false}))
 
+server.use(cookieParser())
+
 //route functions
 server.use('/', authRouter)
-server.use('/', authMiddleware , htmlRouter)
+server.use('/', authMiddleware, htmlRouter)
 
 //error handlers
 server.use(errorhandlermiddleware)
