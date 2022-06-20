@@ -10,18 +10,18 @@ exports.registerUser = async (req, res) => {
    const token = newUser.createJWT()
    if (newUser) {
     res.cookie('token', token, {
-      expires: new Date(Date.now() + 60*60*24*30 ), // time until expiration
+      expires: new Date(Date.now() + 60*60*24*1), // time until expiration
       secure: false, // set to true if you're using https
       httpOnly: true,
     })
-    return res.status(StatusCodes.CREATED).render('login')
+    return res.status(StatusCodes.CREATED).redirect('login')
    }  else {
     return res.status(StatusCodes.BAD_REQUEST).render('/')
    }
 }
 
 exports.loginPage = async (req, res) => {
-   res.render('/login')
+   res.render('login')
 }
 
 exports.loginUser = async (req, res) => {
@@ -46,13 +46,17 @@ exports.loginUser = async (req, res) => {
 
   const token = user.createJWT()
   res.cookie('token', token, {
-    expires: new Date(Date.now() + 60*60*24*30 ), // time until expiration
+    expires: new Date(Date.now() + 60*60*24*1), // time until expiration
     secure: false, // set to true if you're using https
     httpOnly: true,
   })
-  return res.status(StatusCodes.OK).render('product')
+  return res.status(StatusCodes.OK).redirect('product')
 }
 
 exports.logout = async (req, res) => {
-   
+  await res.cookie('token', "", {
+    secure: false, // set to true if you're using https
+    httpOnly: true,
+  })
+  return res.status(StatusCodes.OK).redirect('login')
 }

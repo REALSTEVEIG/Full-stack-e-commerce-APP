@@ -1,12 +1,11 @@
-
 const jwt = require('jsonwebtoken')
 
 
 const authMiddleware = async (req, res, next) => {
     const token = req.cookies.token
 
-    if (!token) {
-        return res.status(401).render('login')
+    if (!token || token === "") {
+        return res.status(401).redirect('login')
     }
 
     try {
@@ -14,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
         req.username = {userId : payload.userId, username : payload.userername}
         next()        
     } catch (error) {
-        return res.status(403).render('/')
+        return res.status(403).redirect('/')
     }
    
 }
