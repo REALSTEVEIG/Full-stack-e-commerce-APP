@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken')
-
+const {StatusCodes} = require('http-status-codes')
 
 const authMiddleware = async (req, res, next) => {
     const token = req.cookies.token
 
     if (!token || token === "") {
-        return res.status(401).redirect('login')
+        return res.status(StatusCodes.UNAUTHORIZED).redirect('login')
     }
 
     try {
@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
         req.username = {userId : payload.userId, username : payload.userername}
         next()        
     } catch (error) {
-        return res.status(403).redirect('/')
+       return res.status(StatusCodes.FORBIDDEN).redirect('login')
     }
    
 }
