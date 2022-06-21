@@ -20,7 +20,7 @@ const errorhandlermiddleware = (err, req, res, next) => {
         customError.statusCode = 404
     }
     console.log(err)
-    return res.status(customError.statusCode).json({msg : customError.msg})
+    //return res.status(customError.statusCode).json({msg : customError.msg})
 
 }
 

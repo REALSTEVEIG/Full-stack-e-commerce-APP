@@ -6,11 +6,33 @@ exports.registerPage = async (req, res) => {
 }
 
 exports.registerUser = async (req, res) => {
-   const newUser = await Auth.create({...req.body})
-   const token = newUser.createJWT()
-   if (newUser) {
+  const {username, email, password} = req.body
+
+  if (!username || !email || !password) {
+     res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Please provide all the required credentials!`})
+  } 
+
+  const suppliedEmail = await Auth.findOne({email})
+
+  if (suppliedEmail) {
+    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Email already exists in our database. Please provide a different one.`})
+  }
+
+  const suppliedUsername = await Auth.findOne({username})
+
+  if (suppliedUsername) {
+    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Username already exists in our database. Please provide a different one.`})
+  }
+
+  const newUser = await Auth.create({
+    username : req.body.username,
+    email : req.body.email,
+    password : req.body.password
+  })
+  const token = newUser.createJWT()
+
+  if (newUser) {
     res.cookie('token', token, {
-      expires: new Date(Date.now() + 60*60*24*1), // time until expiration
       secure: false, // set to true if you're using https
       httpOnly: true,
     })
@@ -46,7 +68,6 @@ exports.loginUser = async (req, res) => {
 
   const token = user.createJWT()
   res.cookie('token', token, {
-    expires: new Date(Date.now() + 60*60*24*1), // time until expiration
     secure: false, // set to true if you're using https
     httpOnly: true,
   })
