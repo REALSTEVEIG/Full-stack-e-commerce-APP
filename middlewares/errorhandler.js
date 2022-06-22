@@ -3,7 +3,7 @@ const {StatusCodes} = require('http-status-codes')
 const errorhandlermiddleware = (err, req, res, next) => {
     const customError = {
         statusCode : err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
-        msg : err.message || `Trouble with our server, please try again some other time!`
+        msg : err.message || {msg : `Trouble with our server, please try again some other time!` }
     }
 
     if (err.name === 'ValidationError') {
@@ -12,15 +12,15 @@ const errorhandlermiddleware = (err, req, res, next) => {
     }
 
     if (err.code && err.code === 11000) {
-        customError.msg = `${Object.keys(err.keyValue)} already exists. Please provide another ${Object.keys(err.keyValue)}`
+        customError.msg = { msg :  `${Object.keys(err.keyValue)} already exists. Please provide another ${Object.keys(err.keyValue)}` }
     }
 
     if (err.name === 'CastError') {
-        customError.msg = `No item found with id : ${err.value}`
+        customError.msg = { msg : `No item found with id : ${err.value}` }
         customError.statusCode = 404
     }
     console.log(err)
-    return res.status(customError.statusCode).redirect('/register',{msg : customError.msg})
+    return res.status(customError.statusCode).render('register', {msg : customError.msg})
 
 }
 
