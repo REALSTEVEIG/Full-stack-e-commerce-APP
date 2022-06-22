@@ -38,8 +38,6 @@ server.use(errorhandlermiddleware)
 server.use(notfoundMiddleware)
 
 //function to check database connection and start server
-
-
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URI)
