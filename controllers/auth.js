@@ -14,14 +14,18 @@ exports.registerUser = async (req, res) => {
 
   const suppliedEmail = await Auth.findOne({email})
 
-  if (suppliedEmail) {
-    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Email already exists in our database. Please provide a different one.`})
-  }
-
   const suppliedUsername = await Auth.findOne({username})
 
+  if (suppliedEmail && suppliedUsername) {
+    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `The email and username you supplied already exists in our database. Please provide a different one`})
+  }
+
+  if (suppliedEmail) {
+    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `${req.body.email} already exists in our database. Please provide a different email.`})
+  }
+
   if (suppliedUsername) {
-    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Username already exists in our database. Please provide a different one.`})
+    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `${req.body.username} already exists in our database. Please provide a different username.`})
   }
 
   const newUser = await Auth.create({
@@ -51,19 +55,19 @@ exports.loginUser = async (req, res) => {
   const {email, password} = req.body
 
   if (!email || !password) {
-    res.status(StatusCodes.BAD_REQUEST).render('login', {msg : `Please provide all the required credentials!`})
+    return res.status(StatusCodes.BAD_REQUEST).render('login', {msg : `Please provide all the required credentials!`})
   }
  
   const user = await Auth.findOne({email})
 
   if (!user) {
-    res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Email does not exist!`})
+    return res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Email does not exist!`})
   }
 
   const isPasswordCorrect = await user.comparePassword(password)
 
   if (!isPasswordCorrect) {
-    res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Password is incorrect!`})
+    return res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Password is incorrect!`})
   }
 
   const token = user.createJWT()
