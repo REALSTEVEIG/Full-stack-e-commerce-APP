@@ -1,7 +1,15 @@
+const jwt = require('jsonwebtoken')
 
-
-exports.index =  (req, res) => {
-    res.render('index')
+exports.index = async (req, res) => {
+    const token = req.cookies.token
+    try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        req.username = {username : payload.username}
+        return res.render('index', {name : payload.username})
+    } catch (error) {
+       // console.log(error)
+    }
+    
 }
 
 exports.about = (req, res) => {
