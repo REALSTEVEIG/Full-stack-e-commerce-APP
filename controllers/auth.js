@@ -75,7 +75,7 @@ exports.loginUser = async (req, res) => {
     secure: false, // set to true if you're using https
     httpOnly: true,
   })
-  return res.status(StatusCodes.OK).redirect('product')
+  return res.status(StatusCodes.OK).redirect('index')
 }
 
 exports.logout = async (req, res) => {
