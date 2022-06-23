@@ -41,9 +41,7 @@ exports.registerUser = async (req, res) => {
       httpOnly: true,
     })
     return res.status(StatusCodes.CREATED).redirect('login')
-   }  else {
-    return res.status(StatusCodes.BAD_REQUEST).render('/')
-   }
+   } 
 }
 
 exports.loginPage = async (req, res) => {
