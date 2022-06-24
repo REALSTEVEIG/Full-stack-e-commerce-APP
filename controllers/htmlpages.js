@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const Contact = require('../models/contact')
 
 const nodemailer = require('nodemailer')
 //Begining of Oauth configuration
@@ -41,6 +42,9 @@ exports.contactSend = (req, res) => {
         <h3>Message</h3>
         <p>${req.body.message}</p>
     `
+
+    const data =  Contact.create({...req.body}) //this will send the clients message and information to my database for future refrences
+
     const accessToken = OAuth2_client.getAccessToken
     let transporter = nodemailer.createTransport({
         service : 'gmail',
