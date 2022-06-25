@@ -9,7 +9,7 @@ exports.registerUser = async (req, res) => {
   const {username, email, password} = req.body
 
   if (!username || !email || !password) {
-     res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Please provide all the required credentials!`})
+    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Please provide all the required credentials!`})
   } 
 
   const suppliedEmail = await Auth.findOne({email})
