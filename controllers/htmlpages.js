@@ -32,6 +32,12 @@ exports.contact = (req, res) => {
 }
 
 exports.contactSend = (req, res) => {
+    const {name, email, message} = req.body
+    
+    if (!name || !email || !message) {
+        return res.status(StatusCodes.BAD_REQUEST).render('contact', {msg1 : `Please provide all the required parameters!`})
+    } 
+
     const output = `
         <h1>You have a new contact request</h1>
         <h3>Contact Details</h3>
