@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const Contact = require('../models/contact')
+const Newsletter = require('../models/newsletter')
 
 const nodemailer = require('nodemailer')
 //Begining of Oauth configuration
@@ -21,6 +22,72 @@ exports.index = async (req, res) => {
        // console.log(error)
     }
     
+}
+
+exports.indexNewsletter = async (req, res) => {
+    const { email } = req.body
+
+    if (!email) {
+        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `Please provide your email!`})
+    }
+
+    const user = await Newsletter.findOne({email})
+
+    if (user) {
+        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `This email has already subscribed to our newsletter!`})
+    } 
+
+    const output = `
+        <h1>You have a new newsletter request</h1>
+        <h3>Contact Details</h3>
+        <ul>
+            <li>Email : ${req.body.email}</li>
+        </ul>
+    `
+
+   const data =  Newsletter.create({email}) //this will send the client's email to my database for future refrences
+
+    const accessToken = OAuth2_client.getAccessToken
+    let transporter = nodemailer.createTransport({
+        service : 'gmail',
+        auth : {
+            type : 'OAuth2',
+            user : config.user,
+            clientId : config.clientId,
+            clientSecret : config.clientSecret,
+            refreshToken : config.refreshToken,
+            accessToken : accessToken
+        }
+    })
+
+    let mailOptions = {
+        from : `AGU NIGERIA <${config.user}>`, // sender address
+        to: `<${req.body.email}>`, // list of receivers   
+        subject : 'Newsletter', // Subject line
+        text : `Thank you for subscribing to our newsletter at Agu Nigeria. Henceforth you will be the first to receive updates on all our newest collections and jaw dropping mega deals!`     
+    }
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        return res.render('index', {msg:'Congratulations your email is now subscribed to our newsletter!'});
+    });
+
+    let mailOptions2 = {        // This will send the mail to your email address
+        from : `AGU NIGERIA <${config.user}>`, // sender address
+        to: `<${config.user}>`, // list of receivers
+        subject: `Message from a new subscriber!`, // Subject line
+        html: output // html body
+    };
+
+    transporter.sendMail(mailOptions2, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+       return console.log('Sent')
+    });
+
 }
 
 exports.about = (req, res) => {
@@ -49,7 +116,7 @@ exports.contactSend = (req, res) => {
         <p>${req.body.message}</p>
     `
 
-    const data =  Contact.create({...req.body}) //this will send the clients message and information to my database for future refrences
+    const data =  Contact.create({...req.body}) //this will send the client's message and information to my database for future refrences
 
     const accessToken = OAuth2_client.getAccessToken
     let transporter = nodemailer.createTransport({
@@ -65,7 +132,7 @@ exports.contactSend = (req, res) => {
     })
 
     let mailOptions = {
-        from : `AGU Nigeria<${config.user}>`, // sender address
+        from : `AGU NIGERIA<${config.user}>`, // sender address
         to: `<${req.body.email}>`, // list of receivers   
         subject : 'Greetings!', // Subject line
         text : `Hello ${req.body.name}. Thank you for contacting Agu Nigeria. We have received your message and will get back to you as soon as possible!`     
@@ -79,7 +146,7 @@ exports.contactSend = (req, res) => {
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
-        from : `FROM STEPHEN <${config.user}>`, // sender address
+        from : `AGU NIGERIA<${config.user}>`, // sender address
         to: `<${config.user}>`, // list of receivers
         subject: `Message from ${req.body.name}!`, // Subject line
         html: output // html body

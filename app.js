@@ -23,10 +23,11 @@ server.set('view engine', 'handlebars')
 //allows us to access the public folder for js and css
 server.use('/public', express.static(path.join(__dirname, 'public')))
 
-// parse user imput in json format
+// parse user input in json format
 server.use(express.json())
 server.use(express.urlencoded({extended: false}))
 
+//use the cookie parser middleware
 server.use(cookieParser())
 
 //route functions
