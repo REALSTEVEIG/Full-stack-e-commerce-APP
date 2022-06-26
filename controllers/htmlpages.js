@@ -28,13 +28,17 @@ exports.indexNewsletter = async (req, res) => {
     const { email } = req.body
 
     if (!email) {
-        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `Please provide your email!`})
+        const token = req.cookies.token
+        const payload = jwt.verify(token, process.env.JWT_SECRET)
+        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `Please provide your email address!`, name : payload.username})
     }
 
     const user = await Newsletter.findOne({email})
 
     if (user) {
-        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `This email has already subscribed to our newsletter!`})
+        const token = req.cookies.token
+        const payload = jwt.verify(token, process.env.JWT_SECRET)
+        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `This email has already subscribed to our newsletter!`, name : payload.username})
     } 
 
     const output = `
@@ -71,7 +75,9 @@ exports.indexNewsletter = async (req, res) => {
         if (error) {
             return console.log(error);
         }
-        return res.render('index', {msg:'Congratulations your email is now subscribed to our newsletter!'});
+        const token = req.cookies.token
+        const payload = jwt.verify(token, process.env.JWT_SECRET)
+        return res.render('index', {msg:'Congratulations your email is now subscribed to our newsletter!', name : payload.username});
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
