@@ -842,7 +842,7 @@
                      <h3>Subscribe To Get Discount Offers</h3>
                         <br>
                         </div>
-                        <p style="color: green ;"> {{msg}}</p> <p style="color: red ;"> {{msg1}}</p>
+                        <p style="color: green; font-family:'Courier New', Courier, monospace"> {{msg}}</p> <p style="color: red; font-family:'Courier New', Courier, monospace"> {{msg1}}</p>
                         <br>
                         <form method="POST" action="newsletter">
                          <fieldset>
@@ -1002,7 +1002,7 @@
                           <p>Subscribe by our newsletter and get update protidin.</p>
                         </div>
                         <div class="form_sub">
-                           <form action="newsletter" method="POST">
+                           <form method="POST" action="newsletter">
                               <fieldset>
                                  <div class="field">
                                     <input type="email" placeholder="Enter Your Mail" name="email" />
@@ -1010,6 +1010,7 @@
                                  </div>
                               </fieldset>
                            </form>
+                           <p style="color: green ; font-family:'Courier New', Courier, monospace"> {{msg}}</p> <p style="color: red ; font-family:'Courier New', Courier, monospace"> {{msg1}}</p>
                         </div>
                      </div>
                   </div>

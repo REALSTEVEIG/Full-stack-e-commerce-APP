@@ -77,7 +77,7 @@ exports.indexNewsletter = async (req, res) => {
         }
         const token = req.cookies.token
         const payload = jwt.verify(token, process.env.JWT_SECRET)
-        return res.render('index', {msg:'Congratulations your email is now subscribed to our newsletter!', name : payload.username});
+        return res.render('index', {msg:'Congratulations your email is now subscribed for our newsletters and product discounts!', name : payload.username});
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
